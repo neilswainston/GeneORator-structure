@@ -107,4 +107,5 @@ venv.bak/
 /.pydevproject
 /out.fasta
 /summary.csv
+/struct_preds.png
 /**/.DS_Store
