@@ -1,7 +1,11 @@
 '''
-Created on 17 Dec 2018
+synbiochem (c) University of Manchester 2018
 
-@author: neilswainston
+synbiochem is licensed under the MIT License.
+
+To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
+
+@author:  neilswainston
 '''
 from collections import defaultdict
 import json
@@ -13,6 +17,7 @@ from Bio.Alphabet import generic_protein
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
+import matplotlib.pyplot as plt
 import pandas as pd
 from synbiochem.utils import net_utils
 
@@ -84,8 +89,7 @@ def analyse(filename, valid_range):
 
     names = df['Sequence name'].str.split('_', n=2, expand=True)
     df['class'] = names[0]
-    df['nucl_index'] = names[1]
-    df['variant_index'] = names[2]
+    df['variant_index'] = names[1]
 
     valid_aas = list(sorted(df['Amino acid number'].unique()))[
         valid_range.start:valid_range.stop]
@@ -102,12 +106,32 @@ def analyse(filename, valid_range):
 
     summary_df = pd.concat(class_aa_nums, axis=1).T
     summary_df.to_csv('summary.csv')
+    return summary_df
+
+
+def plot(df, out_filename='struct_preds.png'):
+    '''Plot.'''
+    plt.rcParams['font.family'] = 'Times New Roman'
+
+    for clss, group_df in df.groupby('class'):
+        plt.errorbar(group_df['Amino acid number'], group_df['mean'],
+                     yerr=group_df['std'],
+                     label=clss,
+                     fmt='o', alpha=0.5, capsize=3)
+
+    plt.title('Probability for Alpha-Helix predictions')
+    plt.xlabel('Amino acid number')
+    plt.ylabel('Probability for Alpha-Helix')
+    plt.legend(loc='upper right')
+    plt.savefig(out_filename, bbox_inches='tight')
 
 
 def main(args):
     '''main method.'''
-    get_fasta(args[0], args[1], args[2:])
-    analyse('data/result.txt', range(len(args[0]) // 3, len(args[1]) // -3))
+    # get_fasta(args[0], args[1], args[2:])
+    summary_df = analyse('data/result.txt',
+                         range(len(args[0]) // 3, len(args[1]) // -3))
+    plot(summary_df)
 
 
 if __name__ == '__main__':
