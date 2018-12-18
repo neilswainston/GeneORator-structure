@@ -128,7 +128,7 @@ def plot(df, out_filename='struct_preds.png'):
 
 def main(args):
     '''main method.'''
-    # get_fasta(args[0], args[1], args[2:])
+    get_fasta(args[0], args[1], args[2:])
     summary_df = analyse('data/result.txt',
                          range(len(args[0]) // 3, len(args[1]) // -3))
     plot(summary_df)
