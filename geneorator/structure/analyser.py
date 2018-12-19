@@ -7,6 +7,9 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 
 @author:  neilswainston
 '''
+# pylint: disable=invalid-name
+# pylint: disable=too-many-locals
+# pylint: disable=too-many-arguments
 from collections import defaultdict
 import json
 from random import choice
@@ -23,7 +26,7 @@ from synbiochem.utils import net_utils
 
 
 def get_fasta(prefix, suffix, entries, out_file='out.fasta',
-              organism='4932', seqs_per_class=100):
+              organism='4932', seqs_per_class=500):
     '''Get fasta file of protein variants.'''
     base_url = 'http://codon.synbiochem.co.uk/codons?codon=%s&organism=%s'
 
@@ -84,7 +87,7 @@ def analyse(filename, valid_range):
                'Probability for Beta-strand',
                'Probability for Coil']
 
-    df = pd.read_csv(filename, comment='#', sep='\s+')
+    df = pd.read_csv(filename, comment='#', sep=r'\s+')
     df.columns = columns
 
     names = df['Sequence name'].str.split('_', n=2, expand=True)
